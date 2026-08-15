@@ -1,20 +1,17 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Miraisen JFT Mock Test</title>
-<link rel="stylesheet" href="style.css?v=20260814-capture-final">
+<title>JFT Mock Test</title>
+<link rel="stylesheet" href="style.css?v=20260815-magarimas-mobile-final">
 </head>
-<body>
-<noscript><div style="padding:20px;font-family:Arial,sans-serif;">JavaScript is required to use the Miraisen JFT Mock Test.</div></noscript>
 
-<!--
-  Student authentication and approval are handled by login.html.
-  index.html is the approved Mock Test page only.
--->
-<!-- MOCK TEST APP: approved user only -->
+<body>
+
 <div id="appShell">
+
 <div class="top">
   <div id="questionInfo"><b>Question: 1</b><br><b>Section: Script and Vocabulary</b></div>
   <div class="timer">◴ Section Time Remaining<br><b id="time">60:00</b></div>
@@ -23,7 +20,7 @@
 
 <div class="green">
   <span>Test: Japan Foundation Test for Basic Japanese</span>
-  <span>Candidate: Miraisen Language Center &nbsp; | &nbsp; <span id="sessionUserEmail"></span> &nbsp; <button id="testLogoutBtn" type="button" style="background:#fff;color:#355f16;border:0;border-radius:4px;padding:3px 7px;font-weight:bold;cursor:pointer;">Logout</button></span>
+  <span>Candidate: Miraisen Language Center</span>
 </div>
 
 <div class="main">
@@ -116,16 +113,18 @@
         <p id="unansweredText"></p>
         <p id="percentText"></p>
 
-        <button onclick="location.reload()">
-            Finish
-        </button>
+        <div id="sectionPercentText"></div>
+
+        <button type="button" class="resultFinishBtn">Finish</button>
 
     </div>
 
 </div>
+
 </div>
 
-<script src="questions.js?v=20260814-capture-final"></script>
-<script src="script.js?v=20260814-capture-final"></script>
+<script src="questions.js?v=20260815-magarimas-mobile-final"></script>
+<script src="script.js?v=20260815-magarimas-result-final"></script>
+
 </body>
 </html>
