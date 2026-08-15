@@ -766,3 +766,127 @@ body.feedback-mode{
     gap:10px;
   }
 }
+
+
+/* =========================================================
+   FINAL QUESTION STACK FIX — 2026-08-15
+   English prompt first, Japanese question directly below.
+   Overrides the old mobile rule that made .inst a horizontal flex row.
+   ========================================================= */
+
+.inst{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+.inst > .instruction,
+.inst > .subtitle,
+.inst > .mainQuestion,
+.inst > .bilingual-question{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  float:none !important;
+  clear:both !important;
+}
+
+.inst .instruction{
+  margin:0 0 6px 0 !important;
+}
+
+.inst .subtitle{
+  margin:0 0 9px 0 !important;
+}
+
+.inst .mainQuestion,
+.inst .bilingual-question{
+  margin:7px 0 0 0 !important;
+}
+
+/* Bilingual question: English above Japanese */
+.bilingual-question{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  gap:7px !important;
+}
+
+.question-english,
+.question-japanese{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+
+.question-english{
+  order:1 !important;
+}
+
+.question-japanese{
+  order:2 !important;
+}
+
+/* Old rule at max-width:800px sets .inst to display:flex.
+   Override it explicitly for tablet and phone. */
+@media(max-width:900px){
+  .inst{
+    display:block !important;
+    flex-direction:column !important;
+    justify-content:flex-start !important;
+    align-items:stretch !important;
+  }
+
+  .inst > *{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .instruction{
+    display:block !important;
+    margin:0 0 5px 0 !important;
+  }
+
+  .subtitle{
+    display:block !important;
+    margin:0 0 8px 0 !important;
+  }
+
+  .mainQuestion{
+    display:block !important;
+    margin:6px 0 0 0 !important;
+  }
+}
+
+@media(max-width:600px){
+  .inst{
+    padding:11px 13px !important;
+  }
+
+  .inst .instruction{
+    font-size:15px !important;
+    line-height:1.45 !important;
+  }
+
+  .inst .subtitle{
+    font-size:14px !important;
+    line-height:1.4 !important;
+  }
+
+  .inst .mainQuestion{
+    font-size:18px !important;
+    line-height:1.55 !important;
+  }
+
+  .question-english{
+    font-size:15px !important;
+    line-height:1.45 !important;
+  }
+
+  .question-japanese{
+    font-size:18px !important;
+    line-height:1.55 !important;
+  }
+}
