@@ -2,6 +2,7 @@ let userAnswers = [];
 let currentQuestion = 0;
 let totalSeconds = 60 * 60;
 let submitted = false;
+let timerIntervalId = null;
 
 // Listening audio control
 let audioPlayCounts = {};
@@ -413,10 +414,319 @@ function makePalette(){
   }
 }
 
+
+// =========================================================
+// MAGARIMAS-STYLE SECTION RESULT + FULL FEEDBACK
+// Section boundaries for THIS set:
+// 1-12 Script & Vocabulary
+// 13-24 Conversation & Expression
+// 25-33 Listening
+// 34+ Reading
+// Double questions count each part separately.
+// =========================================================
+function getSectionDefinitions(){
+  return [
+    { name: "Script & Vocabulary", start: 0, end: 12 },
+    { name: "Conversation & Expression", start: 12, end: 24 },
+    { name: "Listening", start: 24, end: 33 },
+    { name: "Reading", start: 33, end: questions.length }
+  ];
+}
+
+function getSectionWiseStats(){
+  return getSectionDefinitions().map(section => {
+    let correct = 0;
+    let wrong = 0;
+    let unanswered = 0;
+    let total = 0;
+
+    const safeEnd = Math.min(section.end, questions.length);
+
+    for(let index = section.start; index < safeEnd; index++){
+      const q = questions[index];
+      if(!q) continue;
+
+      if(q.type === "double" && Array.isArray(q.parts)){
+        q.parts.forEach((part, partIndex) => {
+          total++;
+          const selected =
+            userAnswers[index] &&
+            userAnswers[index][partIndex] !== undefined
+              ? userAnswers[index][partIndex]
+              : undefined;
+
+          if(selected === undefined || selected === null){
+            unanswered++;
+          }else if(selected === part.answer){
+            correct++;
+          }else{
+            wrong++;
+          }
+        });
+      }else{
+        total++;
+        const selected = userAnswers[index];
+
+        if(selected === undefined || selected === null){
+          unanswered++;
+        }else if(selected === q.answer){
+          correct++;
+        }else{
+          wrong++;
+        }
+      }
+    }
+
+    const percentage = total > 0
+      ? Math.round((correct / total) * 100)
+      : 0;
+
+    return {
+      ...section,
+      correct,
+      wrong,
+      unanswered,
+      total,
+      percentage
+    };
+  });
+}
+
+function getSectionWisePercentHtml(){
+  const stats = getSectionWiseStats();
+
+  let html = `
+    <div class="section-performance">
+      <h2>Section-wise Performance</h2>
+      <div class="section-performance-grid">
+  `;
+
+  stats.forEach(section => {
+    html += `
+      <div class="section-performance-card">
+        <div class="section-performance-title">${section.name}</div>
+        <div class="section-performance-row">
+          <span>${section.correct} / ${section.total} correct</span>
+          <strong>${section.percentage}%</strong>
+        </div>
+        <div class="section-performance-bar">
+          <div class="section-performance-fill" style="width:${section.percentage}%"></div>
+        </div>
+        <div class="section-performance-small">
+          Wrong: ${section.wrong} &nbsp; | &nbsp; Unanswered: ${section.unanswered}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+  return html;
+}
+
+function getSectionLabelByIndex(index){
+  if(index < 12) return "Script & Vocabulary";
+  if(index < 24) return "Conversation & Expression";
+  if(index < 33) return "Listening";
+  return "Reading";
+}
+
+function getFeedbackAnswerHtml(options, selectedIndex){
+  if(selectedIndex === undefined || selectedIndex === null){
+    return `<span class="feedback-unanswered">Unanswered</span>`;
+  }
+
+  if(!Array.isArray(options) || options[selectedIndex] === undefined){
+    return `<span class="feedback-unanswered">Unanswered</span>`;
+  }
+
+  const item = options[selectedIndex];
+
+  if(typeof item === "string"){
+    return item;
+  }
+
+  let html = "";
+
+  if(item && item.image){
+    html += `<img src="${item.image}" class="feedback-answer-img" alt="">`;
+  }
+
+  if(item && item.text){
+    html += `<div>${item.text}</div>`;
+  }
+
+  return html || "";
+}
+
+function getFeedbackRowsData(){
+  const rows = [];
+  let displayNo = 1;
+
+  questions.forEach((q, index) => {
+    if(q.type === "double" && Array.isArray(q.parts)){
+      q.parts.forEach((part, partIndex) => {
+        const selected =
+          userAnswers[index] &&
+          userAnswers[index][partIndex] !== undefined
+            ? userAnswers[index][partIndex]
+            : undefined;
+
+        rows.push({
+          no: displayNo++,
+          section: getSectionLabelByIndex(index),
+          result: selected === part.answer,
+          selected: getFeedbackAnswerHtml(part.options, selected),
+          correct: getFeedbackAnswerHtml(part.options, part.answer)
+        });
+      });
+    }else{
+      const selected = userAnswers[index];
+
+      rows.push({
+        no: displayNo++,
+        section: getSectionLabelByIndex(index),
+        result: selected === q.answer,
+        selected: getFeedbackAnswerHtml(q.options, selected),
+        correct: getFeedbackAnswerHtml(q.options, q.answer)
+      });
+    }
+  });
+
+  return rows;
+}
+
+function getFeedbackRowsHtml(){
+  return getFeedbackRowsData().map(row => `
+    <tr>
+      <td class="feedback-no-cell">${row.no}</td>
+      <td>${row.section}</td>
+      <td class="feedback-result-cell ${row.result ? "correct-mark" : "wrong-mark"}">
+        ${row.result ? "○" : "×"}
+      </td>
+      <td>${row.selected}</td>
+      <td>${row.correct}</td>
+    </tr>
+  `).join("");
+}
+
+function getOverallFeedbackSummaryHtml(){
+  let correct = 0;
+  let wrong = 0;
+  let unanswered = 0;
+  let total = 0;
+
+  getFeedbackRowsData().forEach(row => {
+    total++;
+    if(row.selected.includes("feedback-unanswered")){
+      unanswered++;
+    }else if(row.result){
+      correct++;
+    }else{
+      wrong++;
+    }
+  });
+
+  const score = total > 0 ? Math.round((correct / total) * 250) : 0;
+  const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const status = score >= 200 ? "PASS" : "FAIL";
+
+  return `
+    <span>Total Score: ${score} / 250</span>
+    <span>Correct: ${correct} / ${total}</span>
+    <span>Wrong: ${wrong}</span>
+    <span>Unanswered: ${unanswered}</span>
+    <span>Percentage: ${percent}%</span>
+    <span class="${status === "PASS" ? "pass-text" : "fail-text"}">Result: ${status}</span>
+  `;
+}
+
+function getSectionWiseFeedbackSummaryHtml(){
+  return `
+    <div class="feedback-section-summary">
+      <strong>Section-wise Performance</strong>
+      <div class="feedback-section-summary-list">
+        ${getSectionWiseStats().map(section => `
+          <span>${section.name}: ${section.correct}/${section.total} (${section.percentage}%)</span>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function showTestFeedbackPage(){
+  const rows = getFeedbackRowsData();
+
+  document.documentElement.style.setProperty("height", "auto", "important");
+  document.documentElement.style.setProperty("overflow-y", "auto", "important");
+  document.body.style.setProperty("height", "auto", "important");
+  document.body.style.setProperty("min-height", "100vh", "important");
+  document.body.style.setProperty("overflow-y", "auto", "important");
+  document.body.style.setProperty("overflow-x", "hidden", "important");
+
+  document.body.innerHTML = `
+    <div id="feedbackPage">
+      <div class="feedback-top">
+        <h2>Test Feedback</h2>
+        <button type="button" class="exit-test-btn" onclick="location.reload()">Exit Test</button>
+      </div>
+
+      <div class="feedback-green-line"></div>
+
+      <div class="feedback-box">
+        <div class="feedback-title">Test Result</div>
+
+        <div class="feedback-score-summary">
+          ${getOverallFeedbackSummaryHtml()}
+        </div>
+
+        ${getSectionWiseFeedbackSummaryHtml()}
+
+        <div class="feedback-note">
+          Showing all ${rows.length} answer items. Double questions are shown as separate items.
+        </div>
+
+        <div class="feedback-table-wrap">
+          <table class="feedback-table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Section</th>
+                <th>Result</th>
+                <th>Selected Answer</th>
+                <th>Correct Answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${getFeedbackRowsHtml()}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  window.scrollTo(0, 0);
+}
+
+function setupResultFinishButton(){
+  const resultPage = document.getElementById("resultPage");
+  if(!resultPage) return;
+
+  const btn = resultPage.querySelector(".resultFinishBtn");
+
+  if(btn){
+    btn.onclick = function(e){
+      if(e) e.preventDefault();
+      showTestFeedbackPage();
+    };
+  }
+}
+
 function submitTest(){
   if(submitted) return;
   closeSubmitConfirm();
   submitted = true;
+  setNavigationLock(true);
 
   let correct = 0;
   let wrong = 0;
@@ -426,7 +736,7 @@ function submitTest(){
   for(let i = 0; i < questions.length; i++){
     const q = questions[i];
 
-    if(q.type === "double"){
+    if(q.type === "double" && Array.isArray(q.parts)){
       q.parts.forEach((part, partIndex) => {
         totalMarks++;
 
@@ -450,37 +760,108 @@ function submitTest(){
       }
     }
   }
-  let finalScore = Math.round((correct / totalMarks) * 250);
-let status = finalScore >= 200 ? "PASS" : "FAIL";
-  let percent = Math.round((correct / totalMarks) * 100);
+
+  const finalScore = totalMarks > 0
+    ? Math.round((correct / totalMarks) * 250)
+    : 0;
+
+  const status = finalScore >= 200 ? "PASS" : "FAIL";
+
+  const percent = totalMarks > 0
+    ? Math.round((correct / totalMarks) * 100)
+    : 0;
 
   document.getElementById("scoreText").innerHTML =
-  `<b>Total Score:</b> ${finalScore} / 250`;
+    `<b>Total Score:</b> ${finalScore} / 250`;
 
-document.getElementById("correctText").innerHTML =
-  `<b>Correct:</b> ${correct} / ${totalMarks}`;
+  document.getElementById("correctText").innerHTML =
+    `<b>Correct:</b> ${correct} / ${totalMarks}`;
 
-document.getElementById("wrongText").innerHTML =
-  `<b>Wrong:</b> ${wrong}`;
+  document.getElementById("wrongText").innerHTML =
+    `<b>Wrong:</b> ${wrong}`;
 
-document.getElementById("unansweredText").innerHTML =
-  `<b>Unanswered:</b> ${unanswered}`;
+  document.getElementById("unansweredText").innerHTML =
+    `<b>Unanswered:</b> ${unanswered}`;
 
-document.getElementById("percentText").innerHTML =
-  `<b>Percentage:</b> ${percent}%<br><br>
-   <b>Result:</b>
-   <span style="font-size:30px;font-weight:bold;color:${status === "PASS" ? "green" : "red"}">
-     ${status}
-   </span>`;
+  document.getElementById("percentText").innerHTML =
+    `<b>Percentage:</b> ${percent}%<br><br>
+     <b>Result:</b>
+     <span style="font-size:30px;font-weight:bold;color:${status === "PASS" ? "green" : "red"}">
+       ${status}
+     </span>`;
 
- // Hide Test Screen
-document.querySelector(".top").style.display = "none";
-document.querySelector(".green").style.display = "none";
-document.querySelector(".main").style.display = "none";
-document.querySelector(".footer").style.display = "none";
+  const sectionPercentText =
+    document.getElementById("sectionPercentText");
 
-// Show Result Screen
-document.getElementById("resultPage").style.display = "block";
+  if(sectionPercentText){
+    sectionPercentText.innerHTML =
+      getSectionWisePercentHtml();
+  }
+
+  if(timerIntervalId){
+    clearInterval(timerIntervalId);
+    timerIntervalId = null;
+  }
+
+  const top = document.querySelector(".top");
+  const green = document.querySelector(".green");
+  const main = document.querySelector(".main");
+  const footer = document.querySelector(".footer");
+
+  if(top) top.style.display = "none";
+  if(green) green.style.display = "none";
+  if(main) main.style.display = "none";
+  if(footer) footer.style.display = "none";
+
+  const appShell = document.getElementById("appShell");
+  const resultPage = document.getElementById("resultPage");
+
+  document.documentElement.style.setProperty("height", "auto", "important");
+  document.documentElement.style.setProperty("min-height", "100%", "important");
+  document.documentElement.style.setProperty("overflow-y", "auto", "important");
+  document.documentElement.style.setProperty("overflow-x", "hidden", "important");
+
+  document.body.style.setProperty("height", "auto", "important");
+  document.body.style.setProperty("min-height", "100vh", "important");
+  document.body.style.setProperty("max-height", "none", "important");
+  document.body.style.setProperty("overflow-y", "auto", "important");
+  document.body.style.setProperty("overflow-x", "hidden", "important");
+  document.body.style.setProperty("-webkit-overflow-scrolling", "touch", "important");
+
+  if(appShell){
+    appShell.style.setProperty("height", "auto", "important");
+    appShell.style.setProperty("min-height", "100vh", "important");
+    appShell.style.setProperty("max-height", "none", "important");
+    appShell.style.setProperty("overflow", "visible", "important");
+    appShell.style.setProperty("display", "block", "important");
+  }
+
+  if(resultPage){
+    resultPage.style.setProperty("display", "block", "important");
+    resultPage.style.setProperty("visibility", "visible", "important");
+    resultPage.style.setProperty("opacity", "1", "important");
+    resultPage.style.setProperty("position", "relative", "important");
+    resultPage.style.setProperty("height", "auto", "important");
+    resultPage.style.setProperty("min-height", "100vh", "important");
+    resultPage.style.setProperty("max-height", "none", "important");
+    resultPage.style.setProperty("overflow", "visible", "important");
+
+    const resultBody = resultPage.querySelector(".resultBody");
+
+    if(resultBody){
+      resultBody.style.setProperty("height", "auto", "important");
+      resultBody.style.setProperty("max-height", "none", "important");
+      resultBody.style.setProperty("overflow", "visible", "important");
+      resultBody.style.setProperty("padding-bottom", "80px", "important");
+    }
+  }
+
+  setNavigationLock(false);
+  setupResultFinishButton();
+
+  try{
+    window.scrollTo(0, 0);
+  }catch(_){}
 }
 
 function closeResult(){
@@ -515,8 +896,70 @@ function closeLanguage1(){
   document.getElementById("langModal1").style.display = "none";
 }
 
+
+// =========================================================
+// SECTION CHANGE CONFIRMATION
+// =========================================================
+function showNextSectionConfirm(onYes){
+  const oldBox = document.getElementById("nextSectionConfirmBox");
+  if(oldBox) oldBox.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "nextSectionConfirmBox";
+  overlay.className = "section-confirm-overlay";
+
+  const currentSection = getSectionName();
+  let nextSection = "";
+
+  if(currentQuestion < 12) nextSection = "Conversation and Expression";
+  else if(currentQuestion < 24) nextSection = "Listening";
+  else if(currentQuestion < 33) nextSection = "Reading";
+
+  overlay.innerHTML = `
+    <div class="section-confirm-card">
+      <div class="section-confirm-title">Section Completed</div>
+      <div class="section-confirm-text">
+        तपाईंले <b>${currentSection}</b> section पूरा गर्नुभयो।
+      </div>
+      <div class="section-confirm-text">
+        के तपाईं अर्को section <b>${nextSection}</b> मा जान चाहनुहुन्छ?
+      </div>
+
+      <div class="section-confirm-actions">
+        <button id="nextSectionYes" type="button" class="confirmYes">Yes</button>
+        <button id="nextSectionNo" type="button" class="confirmNo">No</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("nextSectionYes").onclick = function(){
+    overlay.remove();
+    if(typeof onYes === "function") onYes();
+  };
+
+  document.getElementById("nextSectionNo").onclick = function(){
+    overlay.remove();
+  };
+}
+
 document.getElementById("nextBtn").onclick = function(){
   if(audioPlayingNow) return;
+
+  const sectionEnd = getSectionEnd();
+
+  const isLastQuestionOfSection =
+    currentQuestion === sectionEnd - 1 &&
+    currentQuestion < questions.length - 1;
+
+  if(isLastQuestionOfSection){
+    showNextSectionConfirm(function(){
+      currentQuestion++;
+      loadQuestion();
+    });
+    return;
+  }
 
   if(currentQuestion < questions.length - 1){
     currentQuestion++;
@@ -649,4 +1092,4 @@ limitedAudioPlayer.addEventListener("seeking", function(){
 
 loadQuestion();
 updateTimer();
-setInterval(updateTimer, 1000);
+timerIntervalId = setInterval(updateTimer, 1000);
