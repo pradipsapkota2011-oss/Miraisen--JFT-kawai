@@ -890,3 +890,114 @@ body.feedback-mode{
     line-height:1.55 !important;
   }
 }
+
+
+/* =========================================================
+   FINAL SUBMIT CONFIRM MODAL FIX — 2026-08-15
+   Keeps BOTH Yes and No buttons fully visible on phones.
+   ========================================================= */
+
+#submitConfirmBox{
+  position:fixed !important;
+  top:50% !important;
+  left:50% !important;
+  transform:translate(-50%, -50%) !important;
+
+  width:min(430px, calc(100vw - 24px)) !important;
+  max-width:calc(100vw - 24px) !important;
+  min-width:0 !important;
+
+  max-height:calc(100dvh - 32px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+
+  margin:0 !important;
+  box-sizing:border-box !important;
+  z-index:999999 !important;
+
+  background:#fff !important;
+  border:2px solid #111 !important;
+  border-radius:8px !important;
+}
+
+#submitConfirmBox .modal-head{
+  width:100% !important;
+  box-sizing:border-box !important;
+  padding:9px 12px !important;
+}
+
+#submitConfirmBox .result-content{
+  width:100% !important;
+  box-sizing:border-box !important;
+  padding:22px 18px !important;
+  text-align:center !important;
+  line-height:1.4 !important;
+}
+
+#submitConfirmBox .result-content h2{
+  width:100% !important;
+  margin:0 0 20px !important;
+  padding:0 !important;
+  font-size:21px !important;
+  line-height:1.35 !important;
+  text-align:center !important;
+  color:#4f861d !important;
+  overflow-wrap:anywhere !important;
+}
+
+/* Both buttons remain inside the modal. */
+#submitConfirmBox .confirmYes,
+#submitConfirmBox .confirmNo{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  width:120px !important;
+  min-width:120px !important;
+  max-width:calc(50% - 8px) !important;
+
+  min-height:44px !important;
+  margin:0 5px !important;
+  padding:10px 16px !important;
+
+  box-sizing:border-box !important;
+  font-size:16px !important;
+  font-weight:700 !important;
+  border-radius:6px !important;
+  cursor:pointer !important;
+}
+
+#submitConfirmBox .confirmYes{
+  background:#5b922b !important;
+  color:#fff !important;
+}
+
+#submitConfirmBox .confirmNo{
+  background:#ddd !important;
+  color:#111 !important;
+}
+
+@media(max-width:600px){
+  #submitConfirmBox{
+    width:calc(100vw - 20px) !important;
+    max-width:calc(100vw - 20px) !important;
+  }
+
+  #submitConfirmBox .result-content{
+    padding:20px 14px !important;
+  }
+
+  #submitConfirmBox .result-content h2{
+    font-size:19px !important;
+    margin-bottom:18px !important;
+  }
+
+  #submitConfirmBox .confirmYes,
+  #submitConfirmBox .confirmNo{
+    width:calc(50% - 12px) !important;
+    min-width:0 !important;
+    max-width:none !important;
+    margin:0 4px !important;
+    padding:10px 8px !important;
+  }
+}
