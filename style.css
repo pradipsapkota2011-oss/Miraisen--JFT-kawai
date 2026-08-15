@@ -219,7 +219,6 @@ body{display:flex;flex-direction:column}
   border-bottom:1px solid #d0d0d0 !important;
 }
 
-
 /* =========================================================
    FINAL 3-FIX PATCH
    1) result + section percentages scroll
@@ -999,5 +998,220 @@ body.feedback-mode{
     max-width:none !important;
     margin:0 4px !important;
     padding:10px 8px !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL PROTECTIVE MOBILE OVERRIDE
+   ========================================================= */
+@media(max-width:900px){
+  body:not(.result-mode):not(.feedback-mode) #appShell{
+    display:flex !important;
+    flex-direction:column !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    overflow:hidden !important;
+  }
+
+  .main{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    height:0 !important;
+    overflow:hidden !important;
+  }
+
+  .content{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    height:0 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    padding-bottom:85px !important;
+  }
+
+  #optionContainer:not(.imageOptions){
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    gap:8px !important;
+  }
+
+  #optionContainer:not(.imageOptions) .option{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    flex:0 0 auto !important;
+  }
+
+  .footer{
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    flex:0 0 52px !important;
+    height:52px !important;
+    min-height:52px !important;
+    width:100% !important;
+    z-index:100 !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL YOUR LANGUAGE MODAL FIX
+   - full modal visible on mobile
+   - X close button always visible
+   - modal content scrolls if needed
+   ========================================================= */
+
+#langModal1{
+  position:fixed !important;
+  top:50% !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:auto !important;
+
+  transform:translate(-50%, -50%) !important;
+
+  width:min(560px, calc(100vw - 24px)) !important;
+  max-width:calc(100vw - 24px) !important;
+  min-width:0 !important;
+
+  max-height:calc(100dvh - 32px) !important;
+
+  margin:0 !important;
+  padding:0 !important;
+
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+
+  background:#fff !important;
+  border:2px solid #111 !important;
+  border-radius:9px !important;
+
+  box-sizing:border-box !important;
+  z-index:999999 !important;
+
+  -webkit-overflow-scrolling:touch !important;
+}
+
+/* Keep title + X visible while modal content scrolls */
+#langModal1 .modal-head{
+  position:sticky !important;
+  top:0 !important;
+  z-index:10 !important;
+
+  width:100% !important;
+  min-height:42px !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+
+  margin:0 !important;
+  padding:10px 12px !important;
+
+  box-sizing:border-box !important;
+
+  background:#050505 !important;
+  color:#fff !important;
+
+  font-size:16px !important;
+  font-weight:700 !important;
+}
+
+/* X close button */
+#langModal1 .close{
+  float:none !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  flex:0 0 34px !important;
+  width:34px !important;
+  height:34px !important;
+
+  margin-left:12px !important;
+  padding:0 !important;
+
+  border-radius:50% !important;
+
+  color:#fff !important;
+  background:#333 !important;
+
+  font-size:25px !important;
+  line-height:1 !important;
+  font-weight:400 !important;
+
+  cursor:pointer !important;
+  user-select:none !important;
+  touch-action:manipulation !important;
+}
+
+/* Translation table */
+#langModal1 table{
+  width:100% !important;
+  max-width:100% !important;
+
+  margin:0 !important;
+  border-collapse:collapse !important;
+  table-layout:fixed !important;
+
+  background:#fff !important;
+}
+
+#langModal1 td{
+  border:1px solid #bbb !important;
+  padding:12px !important;
+
+  vertical-align:top !important;
+
+  font-size:15px !important;
+  line-height:1.55 !important;
+
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+
+#langModal1 td:first-child{
+  width:82px !important;
+  font-weight:700 !important;
+  background:#f5f5f5 !important;
+}
+
+@media(max-width:600px){
+
+  #langModal1{
+    width:calc(100vw - 16px) !important;
+    max-width:calc(100vw - 16px) !important;
+
+    max-height:calc(100dvh - 20px) !important;
+  }
+
+  #langModal1 .modal-head{
+    min-height:44px !important;
+    padding:8px 10px !important;
+    font-size:15px !important;
+  }
+
+  #langModal1 .close{
+    flex-basis:32px !important;
+    width:32px !important;
+    height:32px !important;
+    font-size:23px !important;
+  }
+
+  #langModal1 td{
+    padding:10px 8px !important;
+    font-size:14px !important;
+    line-height:1.5 !important;
+  }
+
+  #langModal1 td:first-child{
+    width:72px !important;
   }
 }
