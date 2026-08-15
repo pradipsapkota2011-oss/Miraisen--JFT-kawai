@@ -221,7 +221,10 @@ body{display:flex;flex-direction:column}
 
 
 /* =========================================================
-   MAGARIMAS-STYLE MOBILE + RESULT FINAL
+   FINAL 3-FIX PATCH
+   1) result + section percentages scroll
+   2) section Finish/Next Yes-No modal
+   3) English question above Japanese question
    ========================================================= */
 
 #appShell{
@@ -232,7 +235,107 @@ body{display:flex;flex-direction:column}
   flex-direction:column;
 }
 
-/* Result */
+/* ---------- bilingual question ---------- */
+.bilingual-question{
+  display:block !important;
+}
+
+.question-english{
+  display:block;
+  font-size:18px;
+  line-height:1.5;
+  font-weight:500;
+  color:#222;
+  margin-bottom:7px;
+}
+
+.question-japanese{
+  display:block;
+  font-size:22px;
+  line-height:1.55;
+  font-weight:600;
+  color:#111;
+  margin-top:2px;
+}
+
+.part-title-english{
+  font-size:16px;
+  line-height:1.45;
+  margin-bottom:5px;
+  font-weight:600;
+}
+
+.part-title-japanese{
+  font-size:19px;
+  line-height:1.55;
+  font-weight:700;
+}
+
+/* ---------- section yes/no modal ---------- */
+.section-confirm-overlay{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.58);
+}
+
+.section-confirm-card{
+  width:min(440px,94vw);
+  background:#fff;
+  border-radius:13px;
+  padding:26px 22px;
+  text-align:center;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+
+.section-confirm-title{
+  font-size:21px;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.section-confirm-card p{
+  font-size:16px;
+  line-height:1.55;
+  margin:8px 0;
+}
+
+.section-confirm-actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:20px;
+}
+
+.section-confirm-actions .confirmYes,
+.section-confirm-actions .confirmNo{
+  min-width:110px;
+  margin:0;
+}
+
+/* ---------- result + percentage ---------- */
+html.result-mode,
+body.result-mode{
+  height:auto !important;
+  min-height:100% !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+body.result-mode #appShell{
+  height:auto !important;
+  min-height:100vh !important;
+  max-height:none !important;
+  overflow:visible !important;
+  display:block !important;
+}
+
 #resultPage{
   width:100% !important;
   height:auto !important;
@@ -242,52 +345,34 @@ body{display:flex;flex-direction:column}
   background:#fff;
 }
 
-.resultHeader{
-  min-height:55px;
-  height:auto !important;
-  background:#000;
-  color:#fff;
-  font-size:24px;
-  font-weight:bold;
-  padding:12px 25px;
-}
-
 .resultBody{
   height:auto !important;
   max-height:none !important;
   overflow:visible !important;
-  padding:40px;
-}
-
-.resultBody h1{
-  color:#4f861d;
-  font-size:48px;
+  padding:40px 30px 90px;
 }
 
 .resultFinishBtn{
+  margin-top:8px;
+  padding:12px 25px;
   border:0;
   border-radius:7px;
   background:#5b922b;
   color:#fff;
-  padding:12px 24px;
   font-size:16px;
   font-weight:700;
   cursor:pointer;
-  margin-top:8px;
 }
 
-/* Section result */
 .section-performance{
-  margin:24px 0 22px;
+  margin:24px 0 20px;
   padding-top:18px;
-  border-top:1px solid #d8d8d8;
+  border-top:1px solid #ddd;
 }
 
 .section-performance h2{
-  margin:0 0 12px;
   font-size:20px;
-  line-height:1.3;
-  color:#111;
+  margin:0 0 13px;
 }
 
 .section-performance-grid{
@@ -301,21 +386,19 @@ body{display:flex;flex-direction:column}
   border:1px solid #ddd;
   border-radius:10px;
   padding:13px;
-  min-width:0;
 }
 
 .section-performance-title{
   font-size:15px;
-  line-height:1.35;
   font-weight:800;
-  margin-bottom:7px;
+  margin-bottom:8px;
 }
 
 .section-performance-row{
   display:flex;
   justify-content:space-between;
-  gap:10px;
   align-items:center;
+  gap:8px;
   font-size:14px;
   margin-bottom:8px;
 }
@@ -325,7 +408,6 @@ body{display:flex;flex-direction:column}
 }
 
 .section-performance-bar{
-  width:100%;
   height:9px;
   background:#ddd;
   border-radius:999px;
@@ -335,81 +417,39 @@ body{display:flex;flex-direction:column}
 .section-performance-fill{
   height:100%;
   background:#5b922b;
-  border-radius:999px;
 }
 
 .section-performance-small{
   margin-top:8px;
-  color:#555;
   font-size:12px;
-  line-height:1.4;
+  color:#555;
 }
 
-/* Section confirm */
-.section-confirm-overlay{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-  padding:16px;
+/* ---------- full feedback ---------- */
+html.feedback-mode,
+body.feedback-mode{
+  height:auto !important;
+  min-height:100% !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
 }
 
-.section-confirm-card{
-  width:90%;
-  max-width:440px;
-  background:#fff;
-  border-radius:12px;
-  padding:28px 24px;
-  text-align:center;
-  box-shadow:0 8px 30px rgba(0,0,0,.35);
-  font-family:Arial,Helvetica,sans-serif;
-}
-
-.section-confirm-title{
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-
-.section-confirm-text{
-  font-size:17px;
-  line-height:1.6;
-  margin-bottom:10px;
-}
-
-.section-confirm-actions{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  flex-wrap:wrap;
-  margin-top:20px;
-}
-
-/* Full feedback */
 #feedbackPage{
-  display:block;
-  width:100%;
   min-height:100vh;
   background:#f4f4f4;
-  font-family:Arial,Helvetica,sans-serif;
-  color:#111;
 }
 
 .feedback-top{
   position:sticky;
   top:0;
-  z-index:50;
+  z-index:40;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 15px;
   background:#000;
   color:#fff;
-  padding:10px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
 }
 
 .feedback-top h2{
@@ -418,75 +458,49 @@ body{display:flex;flex-direction:column}
 }
 
 .exit-test-btn{
-  background:#ffdc95;
-  color:#111;
+  padding:9px 16px;
   border:0;
-  border-radius:4px;
-  padding:9px 20px;
+  border-radius:5px;
+  background:#ffdc95;
   font-weight:700;
-  cursor:pointer;
 }
 
 .feedback-green-line{
-  height:18px;
+  height:17px;
   background:#5b922b;
 }
 
 .feedback-box{
-  width:92%;
-  margin:18px auto 35px;
+  width:94%;
+  margin:15px auto 35px;
   background:#fff;
-  border:1px solid #cfcfcf;
-  border-radius:12px 12px 0 0;
+  border:1px solid #ccc;
+  border-radius:10px 10px 0 0;
   overflow:visible;
 }
 
 .feedback-title{
+  padding:12px;
   background:#000;
   color:#fff;
-  padding:13px 14px;
   font-weight:700;
-  border-radius:10px 10px 0 0;
+  border-radius:9px 9px 0 0;
 }
-
-.feedback-score-summary{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  padding:12px;
-  border-bottom:1px solid #ddd;
-}
-
-.feedback-score-summary span,
-.feedback-section-summary-list span{
-  display:inline-block;
-  background:#f3f3f3;
-  border:1px solid #ddd;
-  border-radius:6px;
-  padding:7px 10px;
-  font-weight:700;
-}
-
-.pass-text{color:green;}
-.fail-text{color:red;}
 
 .feedback-section-summary{
-  padding:12px;
-  border-bottom:1px solid #ddd;
-}
-
-.feedback-section-summary-list{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin-top:9px;
+  padding:12px;
 }
 
-.feedback-note{
-  padding:9px 12px;
-  color:#444;
+.feedback-section-summary span{
+  padding:7px 9px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  background:#f3f3f3;
   font-size:13px;
-  border-bottom:1px solid #ddd;
+  font-weight:700;
 }
 
 .feedback-table-wrap{
@@ -499,43 +513,36 @@ body{display:flex;flex-direction:column}
   width:100%;
   min-width:760px;
   border-collapse:collapse;
-  table-layout:fixed;
 }
 
 .feedback-table th,
 .feedback-table td{
-  border:1px solid #d8d8d8;
-  padding:11px 9px;
-  vertical-align:middle;
-  font-size:14px;
-  line-height:1.45;
-  word-break:break-word;
+  border:1px solid #ddd;
+  padding:10px 8px;
+  font-size:13px;
+  line-height:1.4;
 }
 
 .feedback-table th{
   background:#efefef;
-  text-align:center;
 }
 
-.feedback-no-cell{
-  width:55px;
+.feedback-no-cell,
+.feedback-result-cell{
   text-align:center;
   font-weight:700;
 }
 
 .feedback-result-cell{
-  width:70px;
-  text-align:center;
-  font-size:22px !important;
-  font-weight:700;
+  font-size:21px !important;
 }
 
 .correct-mark{color:green;}
 .wrong-mark{color:blue;}
 
 .feedback-answer-img{
-  width:90px;
-  max-height:80px;
+  width:85px;
+  max-height:75px;
   object-fit:contain;
   display:block;
   margin:auto;
@@ -545,31 +552,30 @@ body{display:flex;flex-direction:column}
   font-weight:700;
 }
 
-/* Tablet/mobile */
-@media (max-width:900px){
-
-  html,
-  body{
+/* ---------- mobile exam ---------- */
+@media(max-width:900px){
+  html:not(.result-mode):not(.feedback-mode),
+  body:not(.result-mode):not(.feedback-mode){
     width:100% !important;
     height:100% !important;
-    min-height:100% !important;
-    margin:0 !important;
     overflow:hidden !important;
   }
 
-  #appShell{
-    width:100% !important;
+  body:not(.result-mode):not(.feedback-mode) #appShell{
     height:100vh !important;
     height:100dvh !important;
-    min-height:0 !important;
     max-height:100dvh !important;
-    display:flex !important;
-    flex-direction:column !important;
+    min-height:0 !important;
     overflow:hidden !important;
+  }
+
+  .top,
+  .green,
+  .footer{
+    flex:0 0 auto !important;
   }
 
   .top{
-    flex:0 0 auto !important;
     min-height:72px !important;
     height:auto !important;
     display:grid !important;
@@ -583,7 +589,6 @@ body{display:flex;flex-direction:column}
     grid-column:1 !important;
     grid-row:1 !important;
     font-size:11px !important;
-    line-height:1.35 !important;
   }
 
   .timer{
@@ -591,12 +596,10 @@ body{display:flex;flex-direction:column}
     grid-row:2 !important;
     text-align:left !important;
     font-size:11px !important;
-    line-height:1.35 !important;
   }
 
   #time{
     font-size:15px !important;
-    font-weight:700 !important;
   }
 
   .finish{
@@ -608,13 +611,11 @@ body{display:flex;flex-direction:column}
   }
 
   .green{
-    flex:0 0 auto !important;
     height:auto !important;
     min-height:24px !important;
+    flex-wrap:wrap !important;
     padding:3px 6px !important;
     font-size:9px !important;
-    line-height:1.25 !important;
-    flex-wrap:wrap !important;
   }
 
   .main{
@@ -633,44 +634,32 @@ body{display:flex;flex-direction:column}
     overflow-x:auto !important;
     border-right:0 !important;
     border-bottom:1px solid #ccc !important;
-    scrollbar-width:none;
-  }
-
-  .sections::-webkit-scrollbar,
-  .palette::-webkit-scrollbar{
-    display:none;
   }
 
   .sec{
-    flex:1 0 120px !important;
+    flex:0 0 120px !important;
     min-width:120px !important;
-    height:55px !important;
-    padding:7px 4px !important;
-    font-size:11px !important;
+    height:52px !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    padding:5px !important;
     border-right:1px solid #ddd !important;
     border-bottom:0 !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
   }
 
-  .sec::before{
+  .sec:before{
     display:none !important;
-  }
-
-  .sec.activeSec{
-    background:#e6f3da !important;
-    border-bottom:4px solid #6aa72b !important;
   }
 
   .palette{
     flex:0 0 auto !important;
     display:flex !important;
     flex-wrap:nowrap !important;
-    overflow-x:auto !important;
     width:100% !important;
-    padding:7px !important;
+    overflow-x:auto !important;
     gap:6px !important;
+    padding:7px !important;
     border-bottom:1px solid #ddd;
   }
 
@@ -680,7 +669,6 @@ body{display:flex;flex-direction:column}
     height:28px !important;
     line-height:28px !important;
     margin:0 !important;
-    font-size:13px !important;
   }
 
   .content{
@@ -692,33 +680,22 @@ body{display:flex;flex-direction:column}
     overflow-x:hidden !important;
     -webkit-overflow-scrolling:touch !important;
     touch-action:pan-y !important;
-    overscroll-behavior-y:contain;
-    padding:12px 15px 75px !important;
+    padding:12px 15px 80px !important;
   }
 
-  .inst,
-  .instruction{
+  .inst{
     width:100% !important;
-    max-width:100% !important;
-    font-size:18px !important;
-    line-height:1.5 !important;
-  }
-
-  .mainQuestion{
-    font-size:20px !important;
-    line-height:1.55 !important;
   }
 
   .image{
     width:100% !important;
     margin:10px auto !important;
-    text-align:center;
   }
 
   #questionImage{
     display:block !important;
     max-width:90% !important;
-    max-height:250px !important;
+    max-height:240px !important;
     width:auto !important;
     height:auto !important;
     object-fit:contain !important;
@@ -726,220 +703,66 @@ body{display:flex;flex-direction:column}
   }
 
   #optionContainer:not(.imageOptions){
+    width:100% !important;
     display:flex !important;
     flex-direction:column !important;
-    align-items:stretch !important;
-    width:100% !important;
-    max-width:100% !important;
-    margin:8px 0 0 !important;
-    padding:0 0 28px !important;
     gap:8px !important;
+    margin:8px 0 0 !important;
+    padding:0 0 30px !important;
   }
 
   #optionContainer:not(.imageOptions) .option{
-    display:flex !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
     flex:0 0 auto !important;
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
+    margin:0 !important;
     min-height:48px !important;
-    margin:0 !important;
     padding:10px 14px !important;
-    justify-content:flex-start !important;
-    align-items:center !important;
     font-size:16px !important;
-    line-height:1.35 !important;
-    text-align:left !important;
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-  }
-
-  #optionContainer.imageOptions{
-    width:100% !important;
-    max-width:100% !important;
-    display:flex !important;
-    flex-wrap:wrap !important;
-    gap:10px !important;
-    overflow:visible !important;
-  }
-
-  #optionContainer.imageOptions .imageOption{
-    width:calc(50% - 5px) !important;
-    min-width:0 !important;
-    max-width:none !important;
-    height:135px !important;
-    min-height:135px !important;
-    margin:0 !important;
-    padding:7px !important;
-  }
-
-  #optionContainer.imageOptions .imageOption img{
-    width:100% !important;
-    height:110px !important;
-    max-width:100% !important;
-    max-height:110px !important;
-    object-fit:contain !important;
-  }
-
-  .dialogWrap{
-    width:100% !important;
-    display:flex !important;
-    flex-direction:column !important;
-    gap:10px !important;
-  }
-
-  .dialogText{
-    width:100% !important;
-    font-size:18px !important;
-    line-height:1.6 !important;
-  }
-
-  .dialogImage{
-    max-width:180px !important;
-    height:auto !important;
-    margin:auto !important;
-  }
-
-  .doubleOptionRow{
-    width:100% !important;
-    display:flex !important;
-    flex-wrap:wrap !important;
-    gap:8px !important;
-  }
-
-  .doubleOptionRow.verticalOptions{
-    flex-direction:column !important;
-  }
-
-  .doubleOption{
-    max-width:100% !important;
-  }
-
-  .verticalOptions .doubleOption{
-    width:100% !important;
-  }
-
-  .readingPassage{
-    width:100% !important;
-    font-size:19px !important;
-    line-height:1.8 !important;
-    overflow-wrap:anywhere;
-  }
-
-  #audioBox,
-  #audioPlayer{
-    width:100% !important;
-    max-width:100% !important;
   }
 
   .footer{
-    flex:0 0 52px !important;
+    position:relative !important;
+    bottom:auto !important;
     width:100% !important;
     height:52px !important;
     min-height:52px !important;
-    position:relative !important;
-    left:auto !important;
-    right:auto !important;
-    bottom:auto !important;
+    flex-basis:52px !important;
     z-index:100 !important;
-    padding:5px 8px max(5px,env(safe-area-inset-bottom)) !important;
-  }
-
-  .footer button{
-    padding:9px 10px !important;
-    font-size:12px !important;
-  }
-
-  .modal{
-    width:92% !important;
-    max-width:500px !important;
-    left:50% !important;
-    transform:translateX(-50%) !important;
-    max-height:85vh !important;
-    overflow-y:auto !important;
-  }
-
-  /* Result mode can scroll */
-  #resultPage,
-  .resultBody{
-    height:auto !important;
-    max-height:none !important;
-    overflow:visible !important;
   }
 }
 
-@media (max-width:600px){
-
-  .top{
-    min-height:76px !important;
+@media(max-width:600px){
+  .question-english{
+    font-size:15px;
   }
 
-  .green{
-    font-size:9px !important;
+  .question-japanese{
+    font-size:18px;
   }
 
-  .sec{
-    flex:0 0 105px !important;
-    min-width:105px !important;
-    height:48px !important;
-    font-size:10px !important;
+  .part-title-english{
+    font-size:14px;
   }
 
-  .qbtn{
-    flex:0 0 31px !important;
-    width:31px !important;
-    height:27px !important;
-    line-height:27px !important;
-  }
-
-  .content{
-    padding:9px 10px 85px !important;
-  }
-
-  .inst,
-  .instruction{
-    font-size:15px !important;
-  }
-
-  .mainQuestion{
-    font-size:18px !important;
-  }
-
-  #questionImage{
-    max-width:88% !important;
-    max-height:220px !important;
-  }
-
-  .dialogText{
-    font-size:16px !important;
-  }
-
-  .partTitle{
-    font-size:16px !important;
-  }
-
-  .readingPassage{
-    font-size:17px !important;
+  .part-title-japanese{
+    font-size:17px;
   }
 
   .resultBody{
-    padding:28px 24px 90px !important;
-  }
-
-  .resultBody h1{
-    font-size:38px !important;
+    padding:28px 24px 100px !important;
   }
 
   .section-performance-grid{
-    grid-template-columns:1fr !important;
+    grid-template-columns:1fr;
   }
 
-  .feedback-box{
-    width:96%;
-    margin:10px auto 25px;
+  .section-confirm-card{
+    padding:22px 17px;
   }
 
-  .feedback-table{
-    min-width:760px;
+  .section-confirm-actions{
+    gap:10px;
   }
 }
