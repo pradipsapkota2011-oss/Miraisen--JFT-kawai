@@ -371,7 +371,7 @@ B：大変ですよ。………………毎日頑張っています。
   id: 27,
   section: "Listening",
   question: "新年休暇後、女性はどんなことができるでしょうか。",
-  audio: "L6.mp3",
+  audio: "L3.mp3",
   options: [
     { image: "L31.png" },
     { image: "L32.png" },
@@ -424,7 +424,7 @@ B：大変ですよ。………………毎日頑張っています。
   id: "31",
   section: "Listening",
   question: "Listen the audio and answer the following questions?",
-  audio: "L6.mp3",
+  audio: "L7.mp3",
   parts: [
 
     {
